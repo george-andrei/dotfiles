@@ -35,9 +35,6 @@ if ! command -v terraform &>/dev/null && [[ ! -f /etc/apt/sources.list.d/hashico
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
 fi
 
-echo "Updating system packages..."
-sudo apt update -y 2 &>/dev/null
-
 cd ~
 
 echo "📥 Installing required packages..."
