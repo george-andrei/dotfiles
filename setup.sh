@@ -2,26 +2,10 @@
 
 set -euo pipefail
 
-MODE=${1:-}
-
-# --- Update mode ---
-if [[ "$MODE" == "--update" ]]; then
-    echo "🔄 Updating system packages..."
-    sudo apt update && sudo apt upgrade -y
-
-    echo "🔁 Pulling latest dotfiles repo changes..."
-    git pull --rebase
-
-    echo "📦 Updating git submodules..."
-    git submodule update --init --recursive
-    git submodule foreach git pull origin master
-
-    echo "🔗 Restowing dotfiles..."
-    stow zsh p10k vim
-
-    echo "✅ Update complete!"
-    exit 0
-fi
+echo "Check latest version of this repo."
+pushd "$HOME/dotfiles" >/dev/null
+git pull --rebase
+popd
 
 read -r -p "Would you like to install all tools and set up your environment? [y/N] " response
 if [[ ! "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
@@ -49,27 +33,105 @@ sudo apt update && sudo apt install -y \
     fonts-powerline \
     terraform
 
-mkdir -p ~/temp
+# --- Set up Oh My Zsh ---
+ZSH="$HOME/.oh-my-zsh"
+if [ ! -d "$ZSH" ]; then
+    echo "🛠 Installing Oh My Zsh..."
+    git clone https://github.com/ohmyzsh/ohmyzsh.git "$ZSH"
+else
+    echo "✅ Oh My Zsh already installed."
+    echo "🔄 Updating Oh My Zsh..."
+    pushd "$ZSH" >/dev/null
+    git pull --rebase
+    popd >/dev/null
+fi
 
-echo "📂 Initializing git submodules..."
-git submodule update --init --recursive
+# --- Set up powerlevel10k ---
+P10K_DIR="${ZSH_CUSTOM:-$ZSH/custom}/themes/powerlevel10k"
+if [ ! -d "$P10K_DIR" ]; then
+    echo "🎨 Installing powerlevel10k theme..."
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$P10K_DIR"
+else
+    echo "✅ powerlevel10k already installed."
+    echo "🔄 Updating powerlevel10k..."
+    pushd "$P10K_DIR" >/dev/null
+    git pull --rebase
+    popd >/dev/null
+fi
 
+# --- Set up forgit plugin ---
+FORGIT_DIR="${ZSH_CUSTOM:-$ZSH/custom}/plugins/forgit"
+if [ ! -d "$FORGIT_DIR" ]; then
+    echo "🔧 Installing forgit plugin..."
+    git clone https://github.com/wfxr/forgit.git "$FORGIT_DIR"
+else
+    echo "✅ forgit already installed."
+    echo "🔄 Updating forgit..."
+    pushd "$FORGIT_DIR" >/dev/null
+    git pull --rebase
+    popd >/dev/null
+fi
+
+# --- Set up zsh-autosuggestions ---
+AUTOSUGGESTIONS_DIR="${ZSH_CUSTOM:-$ZSH/custom}/plugins/zsh-autosuggestions"
+if [ ! -d "$AUTOSUGGESTIONS_DIR" ]; then
+    echo "💡 Installing zsh-autosuggestions..."
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$AUTOSUGGESTIONS_DIR"
+else
+    echo "✅ zsh-autosuggestions already installed."
+    echo "🔄 Updating zsh-autosuggestions..."
+    pushd "$AUTOSUGGESTIONS_DIR" >/dev/null
+    git pull --rebase
+    popd >/dev/null
+fi
+
+# --- Set up zsh-syntax-highlighting ---
+SYNTAX_HIGHLIGHTING_DIR="${ZSH_CUSTOM:-$ZSH/custom}/plugins/zsh-syntax-highlighting"
+if [ ! -d "$SYNTAX_HIGHLIGHTING_DIR" ]; then
+    echo "🎨 Installing zsh-syntax-highlighting..."
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$SYNTAX_HIGHLIGHTING_DIR"
+else
+    echo "✅ zsh-syntax-highlighting already installed."
+    echo "🔄 Updating zsh-syntax-highlighting..."
+    pushd "$SYNTAX_HIGHLIGHTING_DIR" >/dev/null
+    git pull --rebase
+    popd >/dev/null
+fi
+
+# --- Set up fzf ---
+FZF_DIR="$HOME/.fzf"
+if [ ! -d "$FZF_DIR" ]; then
+    echo "🔍 Installing fzf..."
+    git clone --depth=1 https://github.com/junegunn/fzf.git "$FZF_DIR"
+    $FZF_DIR/install --all
+else
+    echo "✅ fzf already installed."
+    echo "🔄 Updating fzf..."
+    pushd "$FZF_DIR" >/dev/null
+    git pull --rebase
+    popd >/dev/null
+fi
+
+pushd "$HOME/dotfiles" >/dev/null
+
+# --- Restore dotfiles with stow ---
 echo "🔗 Stowing dotfiles..."
 stow zsh p10k vim
 
-echo "Check oh-my-zsh"
-ZSH_DIR="$HOME/dotfiles/oh-my-zsh"
-if [[ ! -f "$ZSH_DIR/oh-my-zsh.sh" ]]; then
-    echo "❌ oh-my-zsh is missing or not fully initialized."
-    echo "Run: git submodule update --init --recursive"
-    exit 1
-fi
-
-if [[ "$SHELL" != "$(which zsh)" ]]; then
+# --- Set zsh as default shell ---
+if [ "$SHELL" != "$(which zsh)" ]; then
     echo "🐚 Changing default shell to zsh..."
     chsh -s "$(which zsh)"
 else
-    echo "✅ zsh is already your default shell."
+    echo "✅ zsh is already the default shell."
 fi
 
-echo "🎉 Setup complete! Launch a new terminal session to enjoy your setup."
+# --- Switch to zsh ---
+if [[ -n "${ZSH_VERSION-}" ]]; then
+    echo "✅ Already running Zsh."
+else
+    echo "🐚 Switching to Zsh..."
+    exec zsh
+fi
+
+echo "🤖 Setup complete!"
