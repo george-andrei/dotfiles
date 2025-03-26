@@ -23,6 +23,8 @@ cd ~
 
 echo "📥 Installing required packages..."
 sudo apt update && sudo apt install -y \
+    mc \
+    ncdu \
     feh \
     gzip \
     vim \
