@@ -15,3 +15,6 @@
 
 - [dops](https://github.com/Mikescher/better-docker-ps)
 - [Encrypted Btrfs](https://gist.github.com/MaxXor/ba1665f47d56c24018a943bb114640d7)
+- [shellcheck](https://github.com/koalaman/shellcheck/)
+- [modern-unix tools](https://github.com/ibraheemdev/modern-unix)
+- [boilerplate](https://github.com/gruntwork-io/boilerplate)

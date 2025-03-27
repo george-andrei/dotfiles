@@ -32,6 +32,7 @@ sudo apt update && sudo apt install -y \
     stow \
     git \
     curl \
+    jq \
     fonts-powerline \
     terraform
 
