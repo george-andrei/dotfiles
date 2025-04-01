@@ -4,7 +4,11 @@ set -euo pipefail
 
 echo "Check latest version of this repo."
 pushd "$HOME/dotfiles" >/dev/null
-git pull --rebase
+if git diff --quiet; then
+    git pull --rebase
+else
+    echo "Unstaged changes detected — skipping pull to avoid conflicts."
+fi
 popd
 
 read -r -p "Would you like to install all tools and set up your environment? [y/N] " response
