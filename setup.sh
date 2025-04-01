@@ -38,6 +38,7 @@ sudo apt update && sudo apt install -y \
     curl \
     jq \
     bat \
+    shellcheck \
     fonts-powerline \
     terraform
 
