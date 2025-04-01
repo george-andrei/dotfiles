@@ -125,7 +125,7 @@ FZF_DIR="$HOME/.fzf"
 if [ ! -d "$FZF_DIR" ]; then
     echo "🔍 Installing fzf..."
     git clone --depth=1 https://github.com/junegunn/fzf.git "$FZF_DIR"
-    $FZF_DIR/install --all
+    "$FZF_DIR"/install --all
 else
     echo "✅ fzf already installed."
     echo "🔄 Updating fzf..."
