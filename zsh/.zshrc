@@ -88,6 +88,7 @@ plugins=(
     docker
     fzf
     forgit
+    zsh-bat
 )
 
 source $ZSH/oh-my-zsh.sh

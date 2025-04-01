@@ -33,6 +33,7 @@ sudo apt update && sudo apt install -y \
     git \
     curl \
     jq \
+    bat \
     fonts-powerline \
     terraform
 
@@ -97,6 +98,19 @@ else
     echo "✅ zsh-syntax-highlighting already installed."
     echo "🔄 Updating zsh-syntax-highlighting..."
     pushd "$SYNTAX_HIGHLIGHTING_DIR" >/dev/null
+    git pull --rebase
+    popd >/dev/null
+fi
+
+# --- Set up zsh-bat ---
+BATCAT_DIR="${ZSH_CUSTOM:-$ZSH/custom}/plugins/zsh-bat"
+if [ ! -d "$BATCAT_DIR" ]; then
+    echo "🎨 Installing zsh-bat..."
+    git clone https://github.com/george-andrei/zsh-bat.git "$BATCAT_DIR"
+else
+    echo "✅ zsh-bat already installed."
+    echo "🔄 Updating zsh-bat..."
+    pushd "$BATCAT_DIR" >/dev/null
     git pull --rebase
     popd >/dev/null
 fi
