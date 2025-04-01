@@ -136,6 +136,19 @@ fi
 
 pushd "$HOME/dotfiles" >/dev/null
 
+# --- wget and un-tar delta ---
+delta_tag_name=$(curl -s https://api.github.com/repos/dandavison/delta/releases/latest | jq -r .tag_name)
+wget -qO- https://github.com/dandavison/delta/releases/download/"$delta_tag_name"/delta-"$delta_tag_name"-x86_64-unknown-linux-gnu.tar.gz \
+  | sudo tar -xzf - -C /usr/bin --strip-components=1 delta-"$delta_tag_name"-x86_64-unknown-linux-gnu/
+
+# --- setup git to use delta ---
+git config --global core.pager delta
+git config --global interactive.diffFilter 'delta --color-only'
+git config --global delta.navigate true
+git config --global delta.side-by-side true
+git config --global delta.line-numbers true
+git config --global merge.conflictStyle zdiff3
+
 # --- Restore dotfiles with stow ---
 echo "🔗 Stowing dotfiles..."
 stow zsh p10k vim
