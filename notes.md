@@ -18,3 +18,4 @@
 - [shellcheck](https://github.com/koalaman/shellcheck/)
 - [modern-unix tools](https://github.com/ibraheemdev/modern-unix)
 - [boilerplate](https://github.com/gruntwork-io/boilerplate)
+- [superfile](https://github.com/yorukot/superfile)
