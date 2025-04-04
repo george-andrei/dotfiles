@@ -7,6 +7,8 @@ install_tools() {
 }
 
 terraform() {
+    pushd "$HOME/dotfiles" >/dev/null
+
     if ! command -v terraform &>/dev/null && [[ ! -f /etc/apt/sources.list.d/hashicorp.list ]]; then
         echo "📦 Adding Terraform repo..."
         wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -16,6 +18,8 @@ terraform() {
     echo "📥 Installing terraform package"
     sudo apt update && sudo apt install -y \
         terraform
+
+    popd >/dev/null
 }
 
 delta() {
@@ -33,6 +37,8 @@ delta() {
     git config --global delta.side-by-side true
     git config --global delta.line-numbers true
     git config --global merge.conflictStyle zdiff3
+
+    popd >/dev/null
 }
 
 fzf() {

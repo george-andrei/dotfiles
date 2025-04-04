@@ -19,8 +19,6 @@ if [[ ! "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
     exit 0
 fi
 
-cd ~
-
 echo "📥 Installing required packages..."
 sudo apt update && sudo apt install -y \
     mc \
@@ -93,9 +91,11 @@ fi
 tools=("terraform" "delta" "fzf" "bat" "forgit")
 install_tools "${tools[@]}"
 
+pushd "$HOME/dotfiles" >/dev/null
 # --- Restore dotfiles with stow ---
 echo "🔗 Stowing dotfiles..."
 stow zsh p10k vim
+popd
 
 # --- Set zsh as default shell ---
 if [ "$SHELL" != "$(which zsh)" ]; then
