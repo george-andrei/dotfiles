@@ -36,7 +36,16 @@ delta() {
     git config --global delta.navigate true
     git config --global delta.side-by-side true
     git config --global delta.line-numbers true
-    git config --global merge.conflictStyle zdiff3
+
+    # conflictStyle zdiff3 is only supported in git >= 2.35
+    git_version=$(git --version | awk '{print $3}')
+
+    major=$(echo "$git_version" | cut -d. -f1)
+    minor=$(echo "$git_version" | cut -d. -f2)
+
+    if [[ $major -gt 2 || ($major -eq 2 && $minor -ge 35) ]]; then
+        git config --global merge.conflictStyle zdiff3
+    fi
 
     popd >/dev/null
 }
