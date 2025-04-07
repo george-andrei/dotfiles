@@ -4,6 +4,11 @@ set expandtab
 set tabstop=4
 set shiftwidth=4
 
+" define char for tabs
+set list
+set listchars=tab:\ ┊\ 
+set listchars=multispace:\ ┊\ 
+
 " always show line numbers
 set number
 
@@ -18,7 +23,10 @@ set smartcase
 set hlsearch
 
 " set colorscheme
-colorscheme pablo
+set background=dark
+colorscheme PaperColor
+
+highlight SpecialKey ctermfg=darkgray guifg=#808080
 
 " when doing :vs split right
 set splitright
