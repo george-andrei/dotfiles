@@ -106,6 +106,13 @@ else
     echo "✅ zsh is already the default shell."
 fi
 
+echo -e "\n 🤖 Setup complete!"
+
+echo -e "\n ------------------------------------------------ \n \n"
+echo -e "💡 Upgradable packages \n"
+apt list --upgradable
+echo -e "\n \n ------------------------------------------------ \n \n"
+
 # --- Switch to zsh ---
 if [[ -n "${ZSH_VERSION-}" ]]; then
     echo "✅ Already running Zsh."
@@ -114,4 +121,3 @@ else
     exec zsh
 fi
 
-echo "🤖 Setup complete!"
