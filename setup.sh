@@ -22,6 +22,7 @@ fi
 echo "📥 Installing required packages..."
 sudo apt update && sudo apt install -y \
     mc \
+    keychain \
     ncdu \
     feh \
     gzip \
