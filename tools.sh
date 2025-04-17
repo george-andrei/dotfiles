@@ -6,6 +6,24 @@ install_tools() {
     done
 }
 
+safe_git_pull_rebase() {
+    # Show the caller name: FUNCNAME[1] or the label if provided.
+    # Default to 'unknown' if nothing is provided
+    local label="${1:-${FUNCNAME[1]:-unknown}}"
+
+    if ! output=$(git pull --rebase 2>&1); then
+        if echo "$output" | grep -q "You have unstaged changes"; then
+            echo "📝 [$label] Unstaged changes detected. Please commit or stash them."
+            return 0
+        fi
+        echo "⚠️ [$label] Git pull failed."
+        echo "🔍 Git says:"
+        echo "$output"
+    else
+        echo "✅ [$label] Git $output"
+    fi
+}
+
 terraform() {
     pushd "$HOME/dotfiles" >/dev/null
 
@@ -61,7 +79,7 @@ fzf() {
         echo "✅ fzf already installed."
         echo "🔄 Updating fzf..."
         pushd "$FZF_DIR" >/dev/null
-        git pull --rebase
+        safe_git_pull_rebase
         popd >/dev/null
     fi
 }
@@ -99,7 +117,7 @@ bat() {
         echo "✅ zsh-bat already installed."
         echo "🔄 Updating zsh-bat..."
         pushd "$BATCAT_DIR" >/dev/null
-        git pull --rebase
+        safe_git_pull_rebase
         popd >/dev/null
     fi
 }
@@ -114,7 +132,7 @@ forgit() {
         echo "✅ forgit already installed."
         echo "🔄 Updating forgit..."
         pushd "$FORGIT_DIR" >/dev/null
-        git pull --rebase
+        safe_git_pull_rebase
         popd >/dev/null
     fi
 }
