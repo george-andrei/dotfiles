@@ -32,7 +32,6 @@ sudo apt update && sudo apt install -y \
     git \
     curl \
     jq \
-    bat \
     shellcheck \
     fonts-powerline
 
@@ -120,4 +119,3 @@ else
     echo "🐚 Switching to Zsh..."
     exec zsh
 fi
-

@@ -67,6 +67,29 @@ fzf() {
 }
 
 bat() {
+    # --- wget and un-tar batcat ---
+    batcat_tag_name=$(curl -s https://api.github.com/repos/sharkdp/bat/releases/latest | jq -r .tag_name)
+    git_bat_release="${batcat_tag_name#v}"
+
+    wget_bat() {
+        batcat_tag_name="$@"
+
+        wget -qO- https://github.com/sharkdp/bat/releases/download/"${batcat_tag_name}"/bat-"${batcat_tag_name}"-x86_64-unknown-linux-gnu.tar.gz |
+            sudo tar -xzf - --strip-components=1 -O bat-${batcat_tag_name}-x86_64-unknown-linux-gnu/bat |
+            sudo tee /usr/bin/batcat >/dev/null &&
+            sudo chmod +x /usr/bin/batcat
+    }
+
+    if ! command -v batcat &>/dev/null; then
+        echo "🗨️ batcat version not detected or version mismatch. Installing bat..."
+        wget_bat "$batcat_tag_name"
+    elif [ $(batcat --version | awk '{print $2}') != "$git_bat_release" ]; then
+        echo "🔄 Updating batcat..."
+        wget_bat "$batcat_tag_name"
+    else
+        echo "✅ batcat already installed and up to date."
+    fi
+
     # --- Set up zsh-bat ---
     BATCAT_DIR="${ZSH_CUSTOM:-$ZSH/custom}/plugins/zsh-bat"
     if [ ! -d "$BATCAT_DIR" ]; then
