@@ -101,6 +101,8 @@ popd
 if [ "$SHELL" != "$(which zsh)" ]; then
     echo "🐚 Changing default shell to zsh..."
     chsh -s "$(which zsh)"
+    echo "🐚 Switching to Zsh..."
+    exec zsh
 else
     echo "✅ zsh is already the default shell."
 fi
@@ -111,11 +113,3 @@ echo -e "\n ------------------------------------------------ \n \n"
 echo -e "💡 Upgradable packages \n"
 apt list --upgradable
 echo -e "\n \n ------------------------------------------------ \n \n"
-
-# --- Switch to zsh ---
-if [[ -n "${ZSH_VERSION-}" ]]; then
-    echo "✅ Already running Zsh."
-else
-    echo "🐚 Switching to Zsh..."
-    exec zsh
-fi
