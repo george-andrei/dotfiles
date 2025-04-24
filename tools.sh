@@ -24,6 +24,14 @@ safe_git_pull_rebase() {
     fi
 }
 
+git_latest_tag() {
+    # Get the latest tag from the git repository
+    git -c 'versionsort.suffix=-' \
+        ls-remote --exit-code --refs --sort='version:refname' --tags "$1" '*.*.*' |
+        tail --lines=1 |
+        cut --delimiter='/' --fields=3
+}
+
 terraform() {
     pushd "$HOME/dotfiles" >/dev/null
 
@@ -40,13 +48,27 @@ terraform() {
     popd >/dev/null
 }
 
-delta() {
+delta_install() {
     pushd "$HOME/dotfiles" >/dev/null
+    delta_tag_name=$(git_latest_tag "https://github.com/dandavison/delta.git")
+
+    wget_delta() {
+        local delta_tag_name="$@"
+        # https://github.com/dandavison/delta/releases/download/0.18.2/delta-0.18.2-x86_64-unknown-linux-gnu.tar.gz
+        wget -qO- https://github.com/dandavison/delta/releases/download/"$delta_tag_name"/delta-"$delta_tag_name"-x86_64-unknown-linux-gnu.tar.gz |
+            sudo tar -xzf - -C /usr/bin --strip-components=1 delta-"$delta_tag_name"-x86_64-unknown-linux-gnu/delta
+    }
 
     # --- wget and un-tar delta ---
-    delta_tag_name=$(curl -s https://api.github.com/repos/dandavison/delta/releases/latest | jq -r .tag_name)
-    wget -qO- https://github.com/dandavison/delta/releases/download/"$delta_tag_name"/delta-"$delta_tag_name"-x86_64-unknown-linux-gnu.tar.gz |
-        sudo tar -xzf - -C /usr/bin --strip-components=1 delta-"$delta_tag_name"-x86_64-unknown-linux-gnu/
+    if ! command -v delta &>/dev/null; then
+        echo "🗨️ delta version not detected or version mismatch. Installing delta..."
+        wget_delta "$delta_tag_name"
+    elif [ $(delta --version | awk '{print $2}') != "$delta_tag_name" ]; then
+        echo "🔄 Updating delta..."
+        wget_delta "$delta_tag_name"
+    else
+        echo "✅ delta already installed and up to date."
+    fi
 
     # --- setup git to use delta ---
     git config --global core.pager delta

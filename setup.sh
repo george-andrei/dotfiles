@@ -88,7 +88,7 @@ else
 fi
 
 # --- install list of tools ---
-tools=("terraform" "delta" "fzf" "bat" "forgit")
+tools=("terraform" "delta_install" "fzf" "bat" "forgit")
 install_tools "${tools[@]}"
 
 pushd "$HOME/dotfiles" >/dev/null
